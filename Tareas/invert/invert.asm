@@ -10,7 +10,8 @@ section .text
 
 _start:
 
-xor rcx, rcx
+xor r8, r8
+mov r8, 0
 
 read:   
    mov rax, 0			; sys_read (code 0)
@@ -32,12 +33,12 @@ read:
 
 pushStack: ; Rutina encargada de meter los elementos a la pila
 
-   xor r11, r11 ; Limpia el registro
+   xor r9, r9 ; Limpia el registro
    
-   inc rcx ; Incrementa un contador que lleva la cantidad de PUSH a la pila
+   inc r8 ; Incrementa un contador que lleva la cantidad de PUSH a la pila
    
-   mov r11, Buffer ; Mueve el caractér al registro R11
-   push r11 ; Mete el caracter a la pila
+   mov r9, Buffer ; Mueve el caractér al registro r9
+   push r9 ; Mete el caracter a la pila
    jmp read ; Jump a read para recibir otro caractér
 
 write:
@@ -48,19 +49,19 @@ write:
    mov rdx, len
    syscall
 	
-   cmp rcx, 0 ; Si el contador es 0, no hay mas elementos a imprimir
+   cmp r8, 0 ; Si el contador es 0, no hay mas elementos a imprimir
    je exit	; JUMP a la salida
    
-   pop r11 ; POP de la pila a R11
+   pop r9 ; POP de la pila a r9
    
    mov rax, 1
    mov rdi, 1
    ;mov rsi, Buffer		; address to the buffer to print from
-   mov rsi, r11 ; Imprime el caractér de R11, que contiene el último PUSH de la pila
+   mov rsi, r9 ; Imprime el caractér de r9, que contiene el último PUSH de la pila
    mov rdx, 1
    syscall
 
-   dec rcx ; Decrementa el contador porque se hizo POP
+   dec r8 ; Decrementa el contador porque se hizo POP
 	
    jmp write			; Vueleve a buscar el siguiente valor de la pila
 
