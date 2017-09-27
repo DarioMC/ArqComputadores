@@ -1,72 +1,69 @@
 section .bss
-   Buffer resb 1
+   Buffer resb 1024
+   Aux resb 1
 
 section .data
-	dispMsg db 'Entre'
-	len equ $ - dispMsg
+	BufferLen dd 1024
 	
 section .text
    global _start
 
 _start:
 
+   mov rax, 0			; SYS_READ
+   mov rdi, 0			; STDIN
+   mov rsi, Buffer		; Direcciona al Buffer
+   mov rdx, BufferLen	; Número de BYTES a leer
+   syscall
+
 xor r8, r8
-mov r8, 0
+xor r9, r9
 
-read:   
-   mov rax, 0			; sys_read (code 0)
-   mov rdi, 0			; file descriptor (code 0 stdin)
-   mov rsi, Buffer		; address to the buffer to read into
-   mov rdx, 1			; number of bytes to read
-   syscall
-
-   cmp rax, 0			; check if the size of the reading is 0
-   je write				; jump to the write tag if 0
-
-   cmp byte [Buffer], 61h	; test the byte on Buffer against 'a'
-   jb pushStack			; if less jump to the tag pushStack
-
-   cmp byte [Buffer], 7Ah	; test the byte on Buffer against 'z'
-   ja pushStack			; if greater jump to the tag pushStack
-
-   sub byte [Buffer], 20h ; Convierte la letra en mayúscula
-
-pushStack: ; Rutina encargada de meter los elementos a la pila
-
-   xor r9, r9 ; Limpia el registro
+mov r8, Buffer ; R8 es el registro que recorre el Buffer
+mov r9, 0	   ; Contador de los elementos en la pila
+  
+loop: ; Ciclo que recorre el Buffer
    
-   inc r8 ; Incrementa un contador que lleva la cantidad de PUSH a la pila
+   cmp byte [r8], 0		; Comprueba si está al final del Buffer
+   je print				; Si está al final, JUMP a la etiqueta que imprime
    
-   mov r9, Buffer ; Mueve el caractér al registro r9
-   push r9 ; Mete el caracter a la pila
-   jmp read ; Jump a read para recibir otro caractér
+   cmp byte [r8], 61h	; Compara el BYTE contra 'a'
+   jb pushStack			; Si es menor, se inserta directamente en la pila
 
-write:
+   cmp byte [r8], 7Ah	; Compara el BYTE contra 'z'
+   ja pushStack			; Si es mayor, se inserta directamente en la pila
 
-   mov rax, 1			; Mensaje de prueba
-   mov rdi, 1			; para asegurar que la etiqueta
-   mov rsi, dispMsg		; es utilizada
-   mov rdx, len
-   syscall
+   sub byte [r8], 20h 	; Convierte la letra en mayúscula
+
+pushStack: ; Etiqueta que inserta a la pila
+   
+   push r8	; Inserto el BYTE en la pila
+   
+   inc r8	; Paso al siguiente BYTE del Buffer
+   
+   inc r9	; Aumento el contador de elementos en la pila
+   
+   jmp loop ; Busca el siguiente BYTE del Buffer
+   
+print:
 	
-   cmp r8, 0 ; Si el contador es 0, no hay mas elementos a imprimir
-   je exit	; JUMP a la salida
-   
-   pop r9 ; POP de la pila a r9
-   
-   mov rax, 1
-   mov rdi, 1
-   ;mov rsi, Buffer		; address to the buffer to print from
-   mov rsi, r9 ; Imprime el caractér de r9, que contiene el último PUSH de la pila
-   mov rdx, 1
-   syscall
-
-   dec r8 ; Decrementa el contador porque se hizo POP
+   cmp r9, 0	; Comprueba si el contador de la pila es 0
+   je exit		; De ser así, se acaba el programa
 	
-   jmp write			; Vueleve a buscar el siguiente valor de la pila
+   pop r8		; Saca el BYTE de la pila
+   mov rsi, r8	; Mueve el BYTE al registro para mostrar en pantalla
+	
+   dec r9		; Reduce el contador de la pila en 1
+	
+   mov rax, 1	; SYS_WRITE
+   mov rdi, 1	; STDOUT
+   mov rdx, 1	; BYTES a imprimir
+   syscall
+   
+   jmp print	; Busca el siguiente valor de la pila
 
 exit:
 
-   mov rax, 60			; sys_exit (code 60)
-   mov rdi, 0			; exit code (code 0 = normal)
+   mov rax, 60			; SYS_EXIT
+   mov rdi, 0			; EXIT
    syscall
