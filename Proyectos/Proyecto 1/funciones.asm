@@ -90,6 +90,14 @@ print:
 	mov     rax, SYS_WRITE
 	syscall
 	ret
+	
+exit:
+	;Exit----------------
+	mov rax, SYS_EXIT
+	mov rdi, EXIT
+	syscall
+	;--------------------
+	ret
 
 shiftRight:
 	xor ax, ax

@@ -50,7 +50,7 @@ section .text
 global _start:
 
 _start:
-
+	
 	mov     rdx, 16
 	mov     rsi, operand1
 	mov     rdi, STDIN
@@ -87,17 +87,111 @@ _start:
 	mov		[operator], rax
 	;--------------------
 	
-	cmp byte [operator], UNSIGNED_ADITION
+	cmp byte [operator], SIGNED_ADDITION
+	je 	performSignedAddition
+	
+	cmp byte [operator], UNSIGNED_ADDITION
 	je 	performUnsigedAddition
-	jne exit
+	
+	cmp byte [operator], SUBSTRACTION
+	je 	performSubstraction
+	
+	cmp byte [operator], AND_OPERATION
+	je 	performAnd
+	
+	cmp byte [operator], OR_OPERATION
+	je 	performOr
+	
+	cmp byte [operator], XOR_OPERATION
+	je 	performXor
+	
+	cmp byte [operator], ONE_COMPLEMENT
+	je 	performOneComplement
+	
+	cmp byte [operator], TWO_COMPLEMENT
+	je 	performTwoComplement
+	
+	cmp byte [operator], SHIFT_RIGHT
+	je 	performShiftRight
+	
+	cmp byte [operator], SHIFT_LEFT
+	je 	performShiftLeft
+	
+	cmp byte [operator], SHIFT_RIGHT_CARRY
+	je 	performShiftRightCarry
+	
+	cmp byte [operator], SHIFT_LEFT_CARRY
+	je 	performShiftLeftCarry
+	
+	cmp byte [operator], ROTATE_RIGHT
+	je 	performRotateRight
+	
+	cmp byte [operator], ROTATE_LEFT
+	je 	performRotateLeft
+	
+	cmp byte [operator], ROTATE_RIGHT_CARRY
+	je 	performRotateRightCarry
+	
+	cmp byte [operator], ROTATE_LEFT_CARRY
+	je 	performRotateLeftCarry
+	
+	call exit
+	
+	performSignedAddition:
+		call exit
 	
 	performUnsigedAddition:
 		call unsignedAddition
-		jmp exit
+		call exit
+		
+	performSubstraction:
+		call substraction
+		call exit
 	
-	exit:
-		;Exit----------------
-		mov rax, SYS_EXIT
-		mov rdi, EXIT
-		syscall
-		;--------------------
+	performAnd:
+		call aluAnd
+		call exit
+	
+	performOr:
+		call aluOr
+		call exit
+		
+	performXor:
+		call aluXor
+		call exit
+
+	performOneComplement:
+		call oneComplement
+		call exit
+	
+	performTwoComplement:
+		call twoComplement
+		call exit
+		
+	performShiftRight:
+		call shiftRight
+		call exit
+		
+	performShiftLeft:
+		call shiftLeft
+		call exit
+	
+	performShiftRightCarry:
+		call exit
+		
+	performShiftLeftCarry:
+		call exit
+		
+	performRotateRight:
+		call rotateRight
+		call exit
+		
+	performRotateLeft:
+		call rotateLeft
+		call exit
+	
+	performRotateRightCarry:
+		call exit
+		
+	performRotateLeftCarry:
+		call exit
