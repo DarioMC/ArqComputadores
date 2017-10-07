@@ -51,7 +51,7 @@ itoa:
   push rbx
 
   push rax
-  mov rbx, 10
+  mov rbx, 2
   mov rcx, itoaResult
 
 _itoacount:
