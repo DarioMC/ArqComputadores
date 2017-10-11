@@ -1,9 +1,34 @@
+%include "macros.asm" 
 %include "funciones.asm"
 
 section .data
 
-	mensaje: db "Entre" , 0xF
-	longitud: equ $ - mensaje
+	mensajeOP1: db "Operand 1: " , 0xF
+	longitudOP1: equ $ - mensajeOP1
+	
+	mensajeOP2: db "Operand 2: " , 0xF
+	longitudOP2: equ $ - mensajeOP2
+	
+	mensajeOP: db "Operator: " , 0xF
+	longitudOP: equ $ - mensajeOP
+	
+	mensajeCF: db "Carry flag" , 0xF
+	longitudCF: equ $ - mensajeCF
+	
+	mensajeACF: db "Auxilary carry flag" , 0xF
+	longitudACF: equ $ - mensajeACF
+	
+	mensajeOF: db "Overflow flag" , 0xF
+	longitudOF: equ $ - mensajeOF
+	
+	mensajeSF: db "Signed flag" , 0xF
+	longitudSF: equ $ - mensajeSF
+	
+	mensajePF: db "Parity flag" , 0xF
+	longitudPF: equ $ - mensajePF
+	
+	mensajeZF: db "Zero flag" , 0xF
+	longitudOZF: equ $ - mensajeZF
 	
 section .bss
 	;Variables de operaciones
@@ -51,23 +76,17 @@ global _start:
 
 _start:
 	
-	mov     rdx, 16
-	mov     rsi, operand1
-	mov     rdi, STDIN
-	mov     rax, SYS_READ
-	syscall
+	write mensajeOP1, longitudOP1
 	
-	mov     rdx, 16
-	mov     rsi, operand2
-	mov     rdi, STDIN
-	mov     rax, SYS_READ
-	syscall
+	read operand1, 16
 	
-	mov     rdx, 16
-	mov     rsi, operator
-	mov     rdi, STDIN
-	mov     rax, SYS_READ
-	syscall
+	write mensajeOP2, longitudOP2
+	
+	read operand2, 16
+	
+	write mensajeOP, longitudOP
+	
+	read operator, 16
 	
 	;Lee el primer operando y lo convierte en entero
 	mov     rax, operand1
@@ -90,7 +109,7 @@ _start:
 	cmp byte [operator], SIGNED_ADDITION
 	je 	performSignedAddition
 	
-	cmp byte [operator], UNSIGNED_ADDITION
+	cmp byte [operator], UNSIGNED_ADITION
 	je 	performUnsigedAddition
 	
 	cmp byte [operator], SUBSTRACTION

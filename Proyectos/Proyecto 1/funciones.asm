@@ -1,32 +1,30 @@
-; atoi turns a string into a number
-; expects decimal
-; stops when a char is not an ascii digit
-; input: string addr in rax
-; output: number in rax
+; ATOI: ASCII TO INT
+; entrada: String en rax
+; salida: Número rax
 atoi:
-  ;preserve registers
+  ;Preserva los registros
   push rcx
   push rbx
 
-  mov rcx, 0 ;rcx will be our result
+  mov rcx, 0 ;rcx va a ser el resultado
 
 _atoiloop:
-  ;are we at the end?
+  ;compara si está al final del String
   cmp [rax], byte 48
   jl _atoiend
 
   cmp [rax], byte 57
   jg _atoiend
 
-  ;multiply result by 10
+  ;Multiplica por 10
   push rax
   mov rax, rcx
-  mov rbx, 10
+  mov rbx, 2
   mul rbx
   mov rcx, rax
   pop rax
 
-  ;subtract 48 from char, add to rcx
+  ;Resta 48 del caracter y lo suma a rcx
   mov bl, byte [rax]
   sub bl, 48
   add rcx, rbx
@@ -37,14 +35,14 @@ _atoiloop:
   
 _atoiend:
   mov rax, rcx
-  ;restore before returning
+  ;Restaura los registros antes de retornar
   pop rbx
   pop rcx
   ret
 
-; itoa turns a number into a 0t string
-; input: number in rax
-; output: string addr in rax
+; ITOA: INT TO ASCII
+; entrada: número en rax
+; salida: String en rax
 itoa:
   push rdx
   push rcx
@@ -84,11 +82,10 @@ _itoawriteloop:
   ret
   
 print:
-	mov     rdx, 16
-	mov     rsi, rax
-	mov     rdi, STDOUT
-	mov     rax, SYS_WRITE
-	syscall
+	mov [result], ax
+	mov rax, [result]
+	call itoa
+	write rax, 16
 	ret
 	
 exit:
@@ -114,11 +111,7 @@ shiftRight:
 		jmp loopSHR
 	
 	endSHR:
-		mov [result], ax
-		mov rax, [result]
-		call itoa
 		call print
-		ret
 
 shiftLeft:
 	xor ax, ax
@@ -135,11 +128,7 @@ shiftLeft:
 		jmp loopSHL
 	
 	endSHL:
-		mov [result], ax
-		mov rax, [result]
-		call itoa
 		call print
-		ret
 
 rotateRight:
 	xor ax, ax
@@ -156,11 +145,7 @@ rotateRight:
 		jmp loopROR
 	
 	endROR:
-		mov [result], ax
-		mov rax, [result]
-		call itoa
 		call print
-		ret
 
 
 rotateLeft:
@@ -178,11 +163,7 @@ rotateLeft:
 		jmp loopROL
 	
 	endROL:
-		mov [result], ax
-		mov rax, [result]
-		call itoa
 		call print
-		ret
 
 unsignedAddition:
 	xor ax, ax
@@ -193,9 +174,6 @@ unsignedAddition:
 	
 	add ax, bx
 	
-	mov [result], ax
-	mov rax, [result]
-	call itoa
 	call print
 	
 	ret
@@ -209,9 +187,6 @@ substraction:
 	
 	sub ax, bx
 	
-	mov [result], ax
-	mov rax, [result]
-	call itoa
 	call print
 	
 	ret
@@ -225,9 +200,6 @@ aluAnd:
 	
 	and ax, bx
 	
-	mov [result], ax
-	mov rax, [result]
-	call itoa
 	call print
 	
 	ret
@@ -241,9 +213,6 @@ aluXor:
 	
 	xor ax, bx
 	
-	mov [result], ax
-	mov rax, [result]
-	call itoa
 	call print
 	
 	ret
@@ -257,9 +226,6 @@ aluOr:
 	
 	or ax, bx
 	
-	mov [result], ax
-	mov rax, [result]
-	call itoa
 	call print
 	
 	ret
@@ -271,9 +237,6 @@ twoComplement:
 	
 	neg ax
 	
-	mov [result], ax
-	mov rax, [result]
-	call itoa
 	call print
 	
 	ret
@@ -286,9 +249,7 @@ oneComplement:
 	neg ax
 	dec ax
 	
-	mov [result], ax
-	mov rax, [result]
-	call itoa
 	call print
 	
 	ret
+
