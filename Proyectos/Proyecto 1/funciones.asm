@@ -88,7 +88,28 @@ print:
 	write rax, 16
 	ret
 	
+printf:	
+	write mensajeCF, longitudCF
+	write carryFlag, 16
+	
+	write mensajeACF, longitudACF
+	write auxiliarycarryFlag, 16
+	
+	write mensajeOF, longitudOF
+	write overflowFlag, 16
+	
+	write mensajePF, longitudPF
+	write parityFlag, 16
+	
+	write mensajeSF, longitudSF
+	write signFlag, 16
+	
+	write mensajeZF, longitudZF
+	write zeroFlag, 16
+	ret
+	
 exit:
+	call printf
 	;Exit----------------
 	mov rax, SYS_EXIT
 	mov rdi, EXIT
@@ -112,6 +133,7 @@ shiftRight:
 	
 	endSHR:
 		call print
+		ret
 
 shiftLeft:
 	xor ax, ax
@@ -129,6 +151,7 @@ shiftLeft:
 	
 	endSHL:
 		call print
+		ret
 
 rotateRight:
 	xor ax, ax
@@ -140,12 +163,13 @@ rotateRight:
 		cmp r8, 0
 		je endROR
 		
-		rol ax, 1
+		ror ax, 1
 		dec r8
 		jmp loopROR
 	
 	endROR:
 		call print
+		ret
 
 
 rotateLeft:
@@ -164,6 +188,7 @@ rotateLeft:
 	
 	endROL:
 		call print
+		ret
 
 unsignedAddition:
 	xor ax, ax

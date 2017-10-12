@@ -12,23 +12,23 @@ section .data
 	mensajeOP: db "Operator: " , 0xF
 	longitudOP: equ $ - mensajeOP
 	
-	mensajeCF: db "Carry flag" , 0xF
+	mensajeCF: db "Carry flag: " , 0xF
 	longitudCF: equ $ - mensajeCF
 	
-	mensajeACF: db "Auxilary carry flag" , 0xF
+	mensajeACF: db "Auxilary carry flag: " , 0xF
 	longitudACF: equ $ - mensajeACF
 	
-	mensajeOF: db "Overflow flag" , 0xF
+	mensajeOF: db "Overflow flag: " , 0xF
 	longitudOF: equ $ - mensajeOF
 	
-	mensajeSF: db "Signed flag" , 0xF
+	mensajeSF: db "Signed flag: " , 0xF
 	longitudSF: equ $ - mensajeSF
 	
-	mensajePF: db "Parity flag" , 0xF
+	mensajePF: db "Parity flag: " , 0xF
 	longitudPF: equ $ - mensajePF
 	
-	mensajeZF: db "Zero flag" , 0xF
-	longitudOZF: equ $ - mensajeZF
+	mensajeZF: db "Zero flag: " , 0xF
+	longitudZF: equ $ - mensajeZF
 	
 section .bss
 	;Variables de operaciones
@@ -37,6 +37,13 @@ section .bss
 	operator	resb 16
 	result		resb 16
 	itoaResult	resb 16
+	
+	carryFlag			resb 16
+	auxiliarycarryFlag	resb 16
+	overflowFlag		resb 16
+	signFlag			resb 16
+	parityFlag			resb 16
+	zeroFlag			resb 16
 	;------------------------
 	
 	;Llamadas al kernel
@@ -52,22 +59,22 @@ section .bss
 	;------------------------
 	
 	;Operaciones del ALU
-	SIGNED_ADDITION		equ 1
-	UNSIGNED_ADITION	equ 2
-	SUBSTRACTION		equ 3
-	AND_OPERATION		equ 4
-	OR_OPERATION		equ 5
-	XOR_OPERATION		equ 6
-	ONE_COMPLEMENT		equ 7
-	TWO_COMPLEMENT		equ 8
-	SHIFT_RIGHT			equ 9
-	SHIFT_LEFT			equ 10
-	SHIFT_RIGHT_CARRY	equ 11
-	SHIFT_LEFT_CARRY	equ 12
-	ROTATE_LEFT			equ 13
-	ROTATE_RIGHT		equ 14
-	ROTATE_LEFT_CARRY	equ 15
-	ROTATE_RIGHT_CARRY	equ 16
+	SIGNED_ADDITION		equ 1b
+	UNSIGNED_ADITION	equ 10b
+	SUBSTRACTION		equ 11b
+	AND_OPERATION		equ 100b ;Problemas
+	OR_OPERATION		equ 101b ;Problemas
+	XOR_OPERATION		equ 110b ;Problemas
+	ONE_COMPLEMENT		equ 111b
+	TWO_COMPLEMENT		equ 1000b
+	SHIFT_RIGHT			equ 1001b
+	SHIFT_LEFT			equ 1010b
+	SHIFT_RIGHT_CARRY	equ 1011b
+	SHIFT_LEFT_CARRY	equ 1100b
+	ROTATE_LEFT			equ 1101b
+	ROTATE_RIGHT		equ 1110b
+	ROTATE_LEFT_CARRY	equ 1111b
+	ROTATE_RIGHT_CARRY	equ 10000b
 	;------------------------
 	
 section .text
@@ -77,16 +84,31 @@ global _start:
 _start:
 	
 	write mensajeOP1, longitudOP1
-	
 	read operand1, 16
 	
 	write mensajeOP2, longitudOP2
-	
 	read operand2, 16
 	
 	write mensajeOP, longitudOP
-	
 	read operator, 16
+	
+	write mensajeCF, longitudCF
+	read carryFlag, 16
+	
+	write mensajeACF, longitudACF
+	read auxiliarycarryFlag, 16
+	
+	write mensajeOF, longitudOF
+	read overflowFlag, 16
+	
+	write mensajePF, longitudPF
+	read parityFlag, 16
+	
+	write mensajeSF, longitudSF
+	read signFlag, 16
+	
+	write mensajeZF, longitudZF
+	read zeroFlag, 16
 	
 	;Lee el primer operando y lo convierte en entero
 	mov     rax, operand1
