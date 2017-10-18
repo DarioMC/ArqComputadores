@@ -82,11 +82,23 @@ _itoawriteloop:
   ret
   
 print:
-	mov [result], ax
-	mov rax, [result]
-	call itoa
-	write rax, 16
-	ret
+	cmp ax, 0
+	je setZeroResult
+	jne printResult
+	
+	setZeroResult:
+		mov word [result], "0"
+		write result, 16
+		jmp exitPrint
+		
+	printResult:
+		mov [result], ax
+		mov rax, [result]
+		call itoa
+		write rax, 16
+	
+	exitPrint:
+		ret
 	
 printf:	
 	write mensajeCF, longitudCF
@@ -109,6 +121,7 @@ printf:
 	ret
 	
 exit:
+	;call setFlags
 	call printf
 	;Exit----------------
 	mov rax, SYS_EXIT
@@ -119,76 +132,84 @@ exit:
 
 shiftRight:
 	xor ax, ax
-	xor r8, r8
+	xor cl, cl
 	mov ax, [operand1]
-	mov r8, [operand2]
-	
-	loopSHR:
-		cmp r8, 0
-		je endSHR
-		
-		shr ax, 1
-		dec r8
-		jmp loopSHR
-	
-	endSHR:
-		call print
-		ret
+	mov cl, [operand2]
+	shr ax, cl
+	call setFlags
+	call print
+	ret
+
+shiftRightCarry:
+	xor ax, ax
+	xor cl, cl
+	mov ax, [operand1]
+	mov cl, [operand2]
+	shr ax, cl
+	call setFlags
+	call print
+	ret
 
 shiftLeft:
 	xor ax, ax
-	xor r8, r8
+	xor cl, cl
 	mov ax, [operand1]
-	mov r8, [operand2]
-	
-	loopSHL:
-		cmp r8, 0
-		je endSHL
+	mov cl, [operand2]
+	shl ax, cl
+	clc
+	call setFlags
+	call print
+	ret
 		
-		shl ax, 1
-		dec r8
-		jmp loopSHL
-	
-	endSHL:
-		call print
-		ret
+shiftLeftCarry:
+	xor ax, ax
+	xor cl, cl
+	mov ax, [operand1]
+	mov cl, [operand2]
+	shl ax, cl
+	call setFlags
+	call print
+	ret
 
 rotateRight:
 	xor ax, ax
-	xor r8, r8
+	xor cl, cl
 	mov ax, [operand1]
-	mov r8, [operand2]
-	
-	loopROR:
-		cmp r8, 0
-		je endROR
-		
-		ror ax, 1
-		dec r8
-		jmp loopROR
-	
-	endROR:
-		call print
-		ret
+	mov cl, [operand2]
+	ror ax, cl
+	call setFlags
+	call print
+	ret
 
+rotateRightCarry:
+	xor ax, ax
+	xor cl, cl
+	mov ax, [operand1]
+	mov cl, [operand2]
+	rcr ax, cl
+	call setFlags
+	call print
+	ret
 
 rotateLeft:
 	xor ax, ax
-	xor r8, r8
+	xor cl, cl
 	mov ax, [operand1]
-	mov r8, [operand2]
-	
-	loopROL:
-		cmp r8, 0
-		je endROL
+	mov cl, [operand2]
+	rol ax, cl
+	call setFlags
+	call print
+	ret
 		
-		rol ax, 1
-		dec r8
-		jmp loopROL
-	
-	endROL:
-		call print
-		ret
+rotateLeftCarry:
+	xor ax, ax
+	xor cl, cl
+	mov ax, [operand1]
+	mov cl, [operand2]
+	rcl ax, cl
+	call setFlags
+	call print
+	ret
 
 unsignedAddition:
 	xor ax, ax
@@ -199,6 +220,7 @@ unsignedAddition:
 	
 	add ax, bx
 	
+	call setFlags
 	call print
 	
 	ret
@@ -212,6 +234,7 @@ substraction:
 	
 	sub ax, bx
 	
+	call setFlags
 	call print
 	
 	ret
@@ -225,6 +248,7 @@ aluAnd:
 	
 	and ax, bx
 	
+	call setFlags
 	call print
 	
 	ret
@@ -238,6 +262,7 @@ aluXor:
 	
 	xor ax, bx
 	
+	call setFlags
 	call print
 	
 	ret
@@ -251,6 +276,7 @@ aluOr:
 	
 	or ax, bx
 	
+	call setFlags
 	call print
 	
 	ret
@@ -262,6 +288,7 @@ twoComplement:
 	
 	neg ax
 	
+	call setFlags
 	call print
 	
 	ret
@@ -274,7 +301,72 @@ oneComplement:
 	neg ax
 	dec ax
 	
+	call setFlags
 	call print
 	
 	ret
 
+setFlags:
+	
+	jumpCarry:
+		jc	setCarry
+		jnc	unsetCarry
+	
+	jumpOverflow:
+		jo	setOverflow
+		jno	unsetOverflow
+	
+	jumpParity:
+		jp	setParity
+		jnp	unsetParity
+	
+	jumpSign:
+		js	setSign
+		jns	unsetSign
+	
+	jumpZero:
+		jz	setZero
+		jnz	unsetZero
+	
+	setCarry:
+		mov word [carryFlag], "1"
+		jmp jumpOverflow
+	unsetCarry:
+		mov word [carryFlag], "0"
+		jmp jumpOverflow
+	
+	;setAuxCarry:
+		;mov word [auxiliarycarryFlag], "1"
+	;unsetsetAuxCarry:
+		;mov word [auxiliarycarryFlag], "0"
+	
+	setOverflow:
+		mov word [overflowFlag], "1"
+		jmp jumpParity
+	unsetOverflow:
+		mov word [overflowFlag], "0"
+		jmp jumpParity
+	
+	setParity:
+		mov word [parityFlag], "1"
+		jmp jumpSign
+	unsetParity:
+		mov word [parityFlag], "0"
+		jmp jumpSign
+	
+	setSign:
+		mov word [signFlag], "1"
+		jmp jumpZero
+	unsetSign:
+		mov word [signFlag], "0"
+		jmp jumpZero
+	
+	setZero:
+		mov word [zeroFlag], "1"
+		jmp end
+	unsetZero:
+		mov word [zeroFlag], "0"
+		jmp end
+		
+	end:	
+		ret

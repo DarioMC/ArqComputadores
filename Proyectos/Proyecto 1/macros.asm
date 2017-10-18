@@ -1,4 +1,5 @@
 %macro write 2
+	xor rsi, rsi
 	mov     rsi, %1
 	mov     rdx, %2
 	mov     rdi, 1

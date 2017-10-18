@@ -12,25 +12,32 @@ section .data
 	mensajeOP: db "Operator: " , 0xF
 	longitudOP: equ $ - mensajeOP
 	
-	mensajeCF: db "Carry flag: " , 0xF
+	mensajeCF: db 10, "Carry flag: " , 0xF
 	longitudCF: equ $ - mensajeCF
 	
-	mensajeACF: db "Auxilary carry flag: " , 0xF
+	mensajeACF: db 10, "Auxilary carry flag: " , 0xF
 	longitudACF: equ $ - mensajeACF
 	
-	mensajeOF: db "Overflow flag: " , 0xF
+	mensajeOF: db 10, "Overflow flag: " , 0xF
 	longitudOF: equ $ - mensajeOF
 	
-	mensajeSF: db "Signed flag: " , 0xF
+	mensajeSF: db 10, "Signed flag: " , 0xF
 	longitudSF: equ $ - mensajeSF
 	
-	mensajePF: db "Parity flag: " , 0xF
+	mensajePF: db 10, "Parity flag: " , 0xF
 	longitudPF: equ $ - mensajePF
 	
-	mensajeZF: db "Zero flag: " , 0xF
+	mensajeZF: db 10, "Zero flag: " , 0xF
 	longitudZF: equ $ - mensajeZF
 	
+	mensajeResult: db 10, "Result: " , 0xF
+	longitudResult: equ $ - mensajeResult
+	
 section .bss
+	;Variables de entrada
+	operand1_in	resb 17
+	operand2_in	resb 17
+	
 	;Variables de operaciones
 	operand1	resb 16
 	operand2	resb 16
@@ -62,9 +69,9 @@ section .bss
 	SIGNED_ADDITION		equ 1b
 	UNSIGNED_ADITION	equ 10b
 	SUBSTRACTION		equ 11b
-	AND_OPERATION		equ 100b ;Problemas
-	OR_OPERATION		equ 101b ;Problemas
-	XOR_OPERATION		equ 110b ;Problemas
+	AND_OPERATION		equ 100b
+	OR_OPERATION		equ 101b
+	XOR_OPERATION		equ 110b
 	ONE_COMPLEMENT		equ 111b
 	TWO_COMPLEMENT		equ 1000b
 	SHIFT_RIGHT			equ 1001b
@@ -84,10 +91,10 @@ global _start:
 _start:
 	
 	write mensajeOP1, longitudOP1
-	read operand1, 16
+	read operand1_in, 17
 	
 	write mensajeOP2, longitudOP2
-	read operand2, 16
+	read operand2_in, 17
 	
 	write mensajeOP, longitudOP
 	read operator, 16
@@ -111,13 +118,13 @@ _start:
 	read zeroFlag, 16
 	
 	;Lee el primer operando y lo convierte en entero
-	mov     rax, operand1
+	mov     rax, operand1_in
 	call 	atoi
 	mov		[operand1], rax
 	;--------------------
 	
 	;Lee el segundo operando y lo convierte en entero
-	mov     rax, operand2
+	mov     rax, operand2_in
 	call 	atoi
 	mov		[operand2], rax
 	;--------------------
@@ -218,9 +225,11 @@ _start:
 		call exit
 	
 	performShiftRightCarry:
+		call shiftRightCarry
 		call exit
 		
 	performShiftLeftCarry:
+		call shiftLeftCarry
 		call exit
 		
 	performRotateRight:
@@ -232,7 +241,9 @@ _start:
 		call exit
 	
 	performRotateRightCarry:
+		call rotateRightCarry
 		call exit
 		
 	performRotateLeftCarry:
+		call rotateLeftCarry
 		call exit
