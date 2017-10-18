@@ -2,7 +2,8 @@
 %include "funciones.asm"
 
 section .data
-
+	
+	;Mensajes de recibimiento de parámetros
 	mensajeOP1: db "Operand 1: " , 0xF
 	longitudOP1: equ $ - mensajeOP1
 	
@@ -15,7 +16,7 @@ section .data
 	mensajeCF: db 10, "Carry flag: " , 0xF
 	longitudCF: equ $ - mensajeCF
 	
-	mensajeACF: db 10, "Auxilary carry flag: " , 0xF
+	mensajeACF: db 10, "Adjust flag: " , 0xF
 	longitudACF: equ $ - mensajeACF
 	
 	mensajeOF: db 10, "Overflow flag: " , 0xF
@@ -32,11 +33,13 @@ section .data
 	
 	mensajeResult: db 10, "Result: " , 0xF
 	longitudResult: equ $ - mensajeResult
+	;--------------------
 	
 section .bss
 	;Variables de entrada
 	operand1_in	resb 17
 	operand2_in	resb 17
+	;--------------------
 	
 	;Variables de operaciones
 	operand1	resb 16
@@ -67,21 +70,21 @@ section .bss
 	
 	;Operaciones del ALU
 	SIGNED_ADDITION		equ 1b
-	UNSIGNED_ADITION	equ 10b
-	SUBSTRACTION		equ 11b
-	AND_OPERATION		equ 100b
-	OR_OPERATION		equ 101b
-	XOR_OPERATION		equ 110b
-	ONE_COMPLEMENT		equ 111b
-	TWO_COMPLEMENT		equ 1000b
-	SHIFT_RIGHT			equ 1001b
+	UNSIGNED_ADITION	equ 10b		;Listo
+	SUBSTRACTION		equ 11b		;Listo
+	AND_OPERATION		equ 100b	;Listo
+	OR_OPERATION		equ 101b	;Listo
+	XOR_OPERATION		equ 110b	;Listo
+	ONE_COMPLEMENT		equ 111b	;Listo
+	TWO_COMPLEMENT		equ 1000b	;Listo
+	SHIFT_RIGHT			equ 1001b	;Listo
 	SHIFT_LEFT			equ 1010b
-	SHIFT_RIGHT_CARRY	equ 1011b
-	SHIFT_LEFT_CARRY	equ 1100b
-	ROTATE_LEFT			equ 1101b
+	SHIFT_RIGHT_CARRY	equ 1011b	;Listo
+	SHIFT_LEFT_CARRY	equ 1100b	
+	ROTATE_LEFT			equ 1101b	
 	ROTATE_RIGHT		equ 1110b
-	ROTATE_LEFT_CARRY	equ 1111b
-	ROTATE_RIGHT_CARRY	equ 10000b
+	ROTATE_LEFT_CARRY	equ 1111b	;Listo
+	ROTATE_RIGHT_CARRY	equ 10000b	;Listo
 	;------------------------
 	
 section .text
@@ -90,32 +93,50 @@ global _start:
 
 _start:
 	
+	;Recibe el operando 1
 	write mensajeOP1, longitudOP1
 	read operand1_in, 17
+	;--------------------
 	
+	;Recibe el operando 2
 	write mensajeOP2, longitudOP2
 	read operand2_in, 17
+	;--------------------
 	
+	;Recibe el operador
 	write mensajeOP, longitudOP
 	read operator, 16
+	;--------------------
 	
+	;Recibe CF
 	write mensajeCF, longitudCF
 	read carryFlag, 16
+	;--------------------
 	
+	;Recibe ACF
 	write mensajeACF, longitudACF
 	read auxiliarycarryFlag, 16
+	;--------------------
 	
+	;Recibe OF
 	write mensajeOF, longitudOF
 	read overflowFlag, 16
+	;--------------------
 	
+	;Recibe PF
 	write mensajePF, longitudPF
 	read parityFlag, 16
+	;--------------------
 	
+	;Recibe SF
 	write mensajeSF, longitudSF
 	read signFlag, 16
+	;--------------------
 	
+	;Recibe ZF
 	write mensajeZF, longitudZF
 	read zeroFlag, 16
+	;--------------------
 	
 	;Lee el primer operando y lo convierte en entero
 	mov     rax, operand1_in
@@ -135,6 +156,8 @@ _start:
 	mov		[operator], rax
 	;--------------------
 	
+	;Compara el operador con los tipos
+	;de operación y JUMP a su ejecución
 	cmp byte [operator], SIGNED_ADDITION
 	je 	performSignedAddition
 	
@@ -182,9 +205,14 @@ _start:
 	
 	cmp byte [operator], ROTATE_LEFT_CARRY
 	je 	performRotateLeftCarry
+	;--------------------
 	
-	call exit
+	;Si no entra un operando válido, llama a sys_exit
+	macroExit
+	;--------------------
 	
+	;Dependiendo del operando, llama al método que ejecuta la operación
+	;Una vez ejecutado, llama a sys_exit
 	performSignedAddition:
 		call exit
 	
@@ -247,3 +275,4 @@ _start:
 	performRotateLeftCarry:
 		call rotateLeftCarry
 		call exit
+	;--------------------

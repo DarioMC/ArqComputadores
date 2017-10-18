@@ -80,7 +80,8 @@ _itoawriteloop:
   pop rcx
   pop rdx
   ret
-  
+
+;Imprime los resultados  
 print:
 	cmp ax, 0
 	je setZeroResult
@@ -99,7 +100,9 @@ print:
 	
 	exitPrint:
 		ret
-	
+;--------------------
+
+;Imprime las banderas
 printf:	
 	write mensajeCF, longitudCF
 	write carryFlag, 16
@@ -119,27 +122,32 @@ printf:
 	write mensajeZF, longitudZF
 	write zeroFlag, 16
 	ret
-	
-exit:
-	;call setFlags
-	call printf
-	;Exit----------------
-	mov rax, SYS_EXIT
-	mov rdi, EXIT
-	syscall
-	;--------------------
-	ret
+;--------------------
 
+;Método que llama a sys_exit
+exit:
+	call printf
+	macroExit
+	ret
+;--------------------
+
+;Shift right
+;Opera sobre ax y cl
+;Limpia el CF después de operar
 shiftRight:
 	xor ax, ax
 	xor cl, cl
 	mov ax, [operand1]
 	mov cl, [operand2]
 	shr ax, cl
+	clc
 	call setFlags
 	call print
 	ret
+;--------------------
 
+;Shift right con carry
+;Opera sobre ax y cl
 shiftRightCarry:
 	xor ax, ax
 	xor cl, cl
@@ -149,7 +157,11 @@ shiftRightCarry:
 	call setFlags
 	call print
 	ret
+;--------------------
 
+;Shift left
+;Opera sobre ax y cl
+;Limpia el CF después de operar
 shiftLeft:
 	xor ax, ax
 	xor cl, cl
@@ -160,7 +172,10 @@ shiftLeft:
 	call setFlags
 	call print
 	ret
-		
+;--------------------
+
+;Shift left con carry
+;Opera sobre ax y cl
 shiftLeftCarry:
 	xor ax, ax
 	xor cl, cl
@@ -170,7 +185,10 @@ shiftLeftCarry:
 	call setFlags
 	call print
 	ret
+;--------------------
 
+;Rotate right
+;Opera sobre ax y cl
 rotateRight:
 	xor ax, ax
 	xor cl, cl
@@ -180,7 +198,10 @@ rotateRight:
 	call setFlags
 	call print
 	ret
+;--------------------
 
+;Rotate right con carry
+;Opera sobre ax y cl
 rotateRightCarry:
 	xor ax, ax
 	xor cl, cl
@@ -190,7 +211,10 @@ rotateRightCarry:
 	call setFlags
 	call print
 	ret
+;--------------------
 
+;Rotate left con carry
+;Opera sobre ax y cl
 rotateLeft:
 	xor ax, ax
 	xor cl, cl
@@ -200,7 +224,10 @@ rotateLeft:
 	call setFlags
 	call print
 	ret
-		
+;--------------------
+
+;Rotate left con carry
+;Opera sobre ax y cl		
 rotateLeftCarry:
 	xor ax, ax
 	xor cl, cl
@@ -210,7 +237,10 @@ rotateLeftCarry:
 	call setFlags
 	call print
 	ret
+;--------------------
 
+;Suma sin signo
+;Opera sobre ax y bx
 unsignedAddition:
 	xor ax, ax
 	xor bx, bx
@@ -224,7 +254,10 @@ unsignedAddition:
 	call print
 	
 	ret
+;--------------------
 
+;Resta
+;Opera sobre ax y bx
 substraction:
 	xor ax, ax
 	xor bx, bx
@@ -238,7 +271,10 @@ substraction:
 	call print
 	
 	ret
+;--------------------
 
+;AND
+;Opera sobre ax y bx
 aluAnd:
 	xor ax, ax
 	xor bx, bx
@@ -252,7 +288,10 @@ aluAnd:
 	call print
 	
 	ret
+;--------------------
 
+;XOR
+;Opera sobre ax y bx
 aluXor:
 	xor ax, ax
 	xor bx, bx
@@ -266,7 +305,10 @@ aluXor:
 	call print
 	
 	ret
-	
+;--------------------
+
+;OR
+;Opera sobre ax y bx
 aluOr:
 	xor ax, ax
 	xor bx, bx
@@ -280,7 +322,10 @@ aluOr:
 	call print
 	
 	ret
+;--------------------
 	
+;Complemento a 2
+;Opera sobre ax
 twoComplement:
 	xor ax, ax
 	
@@ -292,7 +337,10 @@ twoComplement:
 	call print
 	
 	ret
+;--------------------
 
+;Complemento a 1
+;Opera sobre ax
 oneComplement:
 	xor ax, ax
 	
@@ -305,7 +353,11 @@ oneComplement:
 	call print
 	
 	ret
+;--------------------
 
+;Método que setea las banderas a imprimir
+;Dependiendo de la bandera, hace JUMP a la etiqueta que la cambia
+;por 1 o 0 y vuelve a la siguiente etiqueta hasta que se setearon todas 
 setFlags:
 	
 	jumpCarry:
@@ -336,9 +388,9 @@ setFlags:
 		jmp jumpOverflow
 	
 	;setAuxCarry:
-		;mov word [auxiliarycarryFlag], "1"
+	;	mov word [auxiliarycarryFlag], "1	
 	;unsetsetAuxCarry:
-		;mov word [auxiliarycarryFlag], "0"
+	;	mov word [auxiliarycarryFlag], "0"
 	
 	setOverflow:
 		mov word [overflowFlag], "1"
@@ -370,3 +422,4 @@ setFlags:
 		
 	end:	
 		ret
+;--------------------
