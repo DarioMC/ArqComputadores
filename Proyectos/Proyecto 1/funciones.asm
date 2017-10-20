@@ -107,9 +107,6 @@ printf:
 	write mensajeCF, longitudCF
 	write carryFlag, 16
 	
-	write mensajeACF, longitudACF
-	write auxiliarycarryFlag, 16
-	
 	write mensajeOF, longitudOF
 	write overflowFlag, 16
 	
@@ -386,12 +383,7 @@ setFlags:
 	unsetCarry:
 		mov word [carryFlag], "0"
 		jmp jumpOverflow
-	
-	;setAuxCarry:
-	;	mov word [auxiliarycarryFlag], "1	
-	;unsetsetAuxCarry:
-	;	mov word [auxiliarycarryFlag], "0"
-	
+		
 	setOverflow:
 		mov word [overflowFlag], "1"
 		jmp jumpParity

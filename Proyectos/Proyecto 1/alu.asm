@@ -16,9 +16,6 @@ section .data
 	mensajeCF: db 10, "Carry flag: " , 0xF
 	longitudCF: equ $ - mensajeCF
 	
-	mensajeACF: db 10, "Adjust flag: " , 0xF
-	longitudACF: equ $ - mensajeACF
-	
 	mensajeOF: db 10, "Overflow flag: " , 0xF
 	longitudOF: equ $ - mensajeOF
 	
@@ -49,7 +46,6 @@ section .bss
 	itoaResult	resb 16
 	
 	carryFlag			resb 16
-	auxiliarycarryFlag	resb 16
 	overflowFlag		resb 16
 	signFlag			resb 16
 	parityFlag			resb 16
@@ -69,7 +65,6 @@ section .bss
 	;------------------------
 	
 	;Operaciones del ALU
-	SIGNED_ADDITION		equ 1b
 	UNSIGNED_ADITION	equ 10b		;Listo
 	SUBSTRACTION		equ 11b		;Listo
 	AND_OPERATION		equ 100b	;Listo
@@ -113,11 +108,6 @@ _start:
 	read carryFlag, 16
 	;--------------------
 	
-	;Recibe ACF
-	write mensajeACF, longitudACF
-	read auxiliarycarryFlag, 16
-	;--------------------
-	
 	;Recibe OF
 	write mensajeOF, longitudOF
 	read overflowFlag, 16
@@ -158,8 +148,6 @@ _start:
 	
 	;Compara el operador con los tipos
 	;de operación y JUMP a su ejecución
-	cmp byte [operator], SIGNED_ADDITION
-	je 	performSignedAddition
 	
 	cmp byte [operator], UNSIGNED_ADITION
 	je 	performUnsigedAddition
@@ -213,8 +201,6 @@ _start:
 	
 	;Dependiendo del operando, llama al método que ejecuta la operación
 	;Una vez ejecutado, llama a sys_exit
-	performSignedAddition:
-		call exit
 	
 	performUnsigedAddition:
 		call unsignedAddition
