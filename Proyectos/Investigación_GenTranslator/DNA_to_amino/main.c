@@ -9,9 +9,7 @@
 	       2. The DNA sequence must contain a maximum
 	          of 4095 chars.
 
-	(c) Darío Monestel C.
-	    Jeffrey Alvarado .
-	    Ricardo Dávila P.
+	(c) Darío Monestel C. , Jeffrey Alvarado , Ricardo Dávila P.
 		Costa Rica Institute of Technology.
 		ll S 2017.
 	--------------------------------------------------------------
