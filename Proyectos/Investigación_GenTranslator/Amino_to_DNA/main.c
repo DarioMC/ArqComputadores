@@ -131,10 +131,29 @@ bool are_aminoacids(char *sequence)
     return true;
 }
 
+void RNA_to_aminoacids(char *RNA_sequence, char *aminoacids_sequence)
+{
+    int seq_len = strlen(RNA_sequence);
+    /* make sure to read only codon triplets */
+    while (seq_len % 3 != 0) {
+        seq_len -= 1;
+    }
+    seq_len -= 3;
+    int j = 0;
+    int i;
+    for (i = 0; i <= seq_len; i += 3) {
+        char codon[4];
+        strncpy(codon, RNA_sequence + i, 3);
+        codon[3] = '\0';
+        aminoacids_sequence[j] = get_aminoacid(codon);
+        ++j;
+    }
+    aminoacids_sequence[j] = '\0';
+}
+
 /*
 
     TO DO
-         Funtion RNA_to_aminoacids
          Funtion permutations_aux
          Funtion permutations
                  generate_RNA
