@@ -168,7 +168,6 @@ void translate_file_with_DNA()
 
 /*
    TO DO :
-       Funtion   RNA_to_aminoacids   (For)
        Funtion   translate_file_with_DNA()
 */
 

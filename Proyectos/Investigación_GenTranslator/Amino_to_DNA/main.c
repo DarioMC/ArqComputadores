@@ -10,7 +10,7 @@
            2. The aminoacids sequence must contain a maximum
               of 1364 chars.
 
-    (c) Darío Monestel C. , Jeffrey Alvarado , Ricardo Dávila P.
+    (c) Darío Monestel C. , Jeffrey Alvarado Q. , Ricardo Dávila P.
         Costa Rica Institute of Technology.
 		ll S 2017.
     --------------------------------------------------------------
@@ -114,13 +114,26 @@ char get_aminoacid(const char *codon)
     return code ? code->aminoacid : '\0';
 }
 
+bool are_aminoacids(char *sequence)
+{
+    int seq_len = strlen(sequence);
+    int i;
+    for (i = 0; i < seq_len; ++i) {
+        char c = sequence[i];
+        if (c !='F' && c != 'L' && c != 'I' && c !='M' &&
+            c != 'V' && c != 'S' && c != 'P' && c != 'T' &&
+            c != 'A' && c != 'Y' && c != '.' && c != 'H' &&
+            c != 'Q' && c != 'N' && c != 'K' && c != 'D' &&
+            c != 'E' && c != 'C' && c != 'W' && c != 'R' && c != 'G') {
+            return false;
+        }
+    }
+    return true;
+}
+
 /*
 
     TO DO
-
-
-         get_aminoacid  (review)
-         are_aminoacids
          Funtion RNA_to_aminoacids
          Funtion permutations_aux
          Funtion permutations
