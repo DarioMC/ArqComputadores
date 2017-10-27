@@ -141,9 +141,35 @@ void to_RNA(char *sequence)
 }
 
 
+void RNA_to_aminoacids(char *sequence)
+{
+	int seq_len = strlen(sequence);
+	/* make sure to read only codon triplets */
+	while (seq_len % 3 != 0) {
+		seq_len -= 1;
+	}
+	seq_len -= 3;
+	int j = 0;
+	int i;
+	for (i = 0; i <= seq_len; i += 3) {
+		char codon[4];
+		//strncpy(codon, sequence + i, 3);
+		//codon[4] = '\0';   // 3?
+		//sequence[j] = get_aminoacid(codon);
+		//++j;
+	}
+	sequence[j] = '\0';
+}
+
+void translate_file_with_DNA()
+{
+    //  search manage files
+}
+
+
 /*
    TO DO :
-       Funtion   RNA_to_aminoacids
+       Funtion   RNA_to_aminoacids   (For)
        Funtion   translate_file_with_DNA()
 */
 
