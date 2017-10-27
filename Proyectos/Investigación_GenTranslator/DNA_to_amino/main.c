@@ -140,7 +140,6 @@ void to_RNA(char *sequence)
 	}
 }
 
-
 void RNA_to_aminoacids(char *sequence)
 {
 	int seq_len = strlen(sequence);
@@ -153,10 +152,10 @@ void RNA_to_aminoacids(char *sequence)
 	int i;
 	for (i = 0; i <= seq_len; i += 3) {
 		char codon[4];
-		//strncpy(codon, sequence + i, 3);
-		//codon[4] = '\0';   // 3?
-		//sequence[j] = get_aminoacid(codon);
-		//++j;
+		strncpy(codon, sequence + i, 3);
+		codon[3] = '\0';
+		sequence[j] = get_aminoacid(codon);
+		++j;
 	}
 	sequence[j] = '\0';
 }

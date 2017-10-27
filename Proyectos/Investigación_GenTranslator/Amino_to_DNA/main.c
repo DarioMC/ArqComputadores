@@ -98,12 +98,28 @@ static struct code codes[] = {
     {"GGG", 'G'}
 };
 
+static int compare(const void *p1, const void *p2)
+{
+    return strcmp(*((const char **)p1), *((const char **)p2));
+}
+
+char get_aminoacid(const char *codon)
+{
+    if (!sorted) {
+        qsort(codes, NELEMS(codes), sizeof(*codes), compare);
+        sorted = true;
+    }
+    struct code *code = bsearch(&codon, codes, NELEMS(codes),
+        sizeof(*codes), compare);
+    return code ? code->aminoacid : '\0';
+}
+
 /*
 
     TO DO
 
-         Funtion   Compare
-         get_aminoacid
+
+         get_aminoacid  (review)
          are_aminoacids
          Funtion RNA_to_aminoacids
          Funtion permutations_aux
