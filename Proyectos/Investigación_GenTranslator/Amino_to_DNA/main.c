@@ -154,6 +154,7 @@ void RNA_to_aminoacids(char *RNA_sequence, char *aminoacids_sequence)
 /*
 
     TO DO
+
          Funtion permutations_aux
          Funtion permutations
                  generate_RNA

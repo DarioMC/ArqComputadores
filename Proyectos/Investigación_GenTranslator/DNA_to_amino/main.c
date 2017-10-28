@@ -162,14 +162,62 @@ void RNA_to_aminoacids(char *sequence)
 
 void translate_file_with_DNA()
 {
-    //  search manage files
+	puts("**DNA-to-Amino-Acids**");
+	/* scans file with DNA */
+	printf("Please enter the path of file to scan: ");
+	char source_file_name[80];
+	scanf("%79s", source_file_name);
+	/* scans DNA sequence */
+	FILE *source_file_ptr;
+	if (!(source_file_ptr = fopen(source_file_name, "r"))) {
+		fputs("translate_file_with_DNA() error: file open failed.", stderr);
+		fclose(source_file_ptr);
+		return;
+	}
+	/* scans text until newline */
+	char translation_buffer[4096];
+	fscanf(source_file_ptr,"%4095[^\n]", translation_buffer);
+	fclose(source_file_ptr);
+	printf("Data from the file: %s\n", translation_buffer);
+	if (!is_DNA(translation_buffer)) {
+		fputs("translate_file_with_DNA() error: this is not DNA.", stderr);
+		return;
+	}
+	to_RNA(translation_buffer);
+	printf("RNA: %s\n", translation_buffer);
+	RNA_to_aminoacids(translation_buffer);
+	printf("Aminoacids: %s\n", translation_buffer);
 }
 
 
-/*
-   TO DO :
-       Funtion   translate_file_with_DNA()
-*/
+void translate_file_with_DNA()
+{
+	puts("**DNA-to-Amino-Acids**");
+	/* scans file with DNA */
+	printf("Please enter the path of file to scan: ");
+	char source_file_name[80];
+	scanf("%79s", source_file_name);
+	/* scans DNA sequence */
+	FILE *source_file_ptr;
+	if (!(source_file_ptr = fopen(source_file_name, "r"))) {
+		fputs("translate_file_with_DNA() error: file open failed.", stderr);
+		fclose(source_file_ptr);
+		return;
+	}
+	/* scans text until newline */
+	char translation_buffer[4096];
+	fscanf(source_file_ptr,"%4095[^\n]", translation_buffer);
+	fclose(source_file_ptr);
+	printf("Data from the file: %s\n", translation_buffer);
+	if (!is_DNA(translation_buffer)) {
+		fputs("translate_file_with_DNA() error: this is not DNA.", stderr);
+		return;
+	}
+	to_RNA(translation_buffer);
+	printf("RNA: %s\n", translation_buffer);
+	RNA_to_aminoacids(translation_buffer);
+	printf("Aminoacids: %s\n", translation_buffer);
+}
 
 
 int main(int argc, char *argv[])

@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1509116252 source:c:\users\admin\desktop\archivos tec\2017_tec_lls\arquitectura\repositorioarqui\arqcomputadores\proyectos\investigación_gentranslator\amino_to_dna\main.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<stdbool.h>
+
