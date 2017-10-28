@@ -151,13 +151,43 @@ void RNA_to_aminoacids(char *RNA_sequence, char *aminoacids_sequence)
     aminoacids_sequence[j] = '\0';
 }
 
-/*
+void permutations_aux(FILE *target_file_ptr, char *set,
+    char *prefix, int set_len, int k)
+{
+    /* Base case: if k is 0 then print prefix */
+    if (k == 0) {
+        fprintf(target_file_ptr, "%s\n", prefix);
+        return;
+    }
+    /* One by one add all characters from set and recursively */
+    /* call for k equals to k-1 */
+    int i;
+    for (i = 0; i < set_len; ++i) {
+        /* Next character of input added */
+        /* Only permutations of 4095 lenght are allowed */
+        char new_prefix[4096];
+        strcpy(new_prefix, prefix);
+        int len = strlen(new_prefix);
+        new_prefix[len] = set[i];;
+        new_prefix[len+1] = '\0';
+        /* k is decreased because a new character is added */
+        permutations_aux(target_file_ptr, set, new_prefix, set_len, k-1);
+    }
+}
 
-    TO DO
+void permutations(char set[], char *target_file_name, int k)
+{
+    int set_len = strlen(set);
+    FILE *file_ptr = fopen(target_file_name, "w");
+    if (file_ptr == NULL) {
+        fputs("permutations error: file open failed.", stderr);
+        return;
+    }
+    permutations_aux(file_ptr, set, "", set_len, k);
+    fclose(file_ptr);
+}
 
-         Funtion permutations_aux
-         Funtion permutations
-*/
+
 
 void generate_RNA(char *target_file_name, int k)
 {
