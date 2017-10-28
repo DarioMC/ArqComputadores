@@ -157,21 +157,89 @@ void RNA_to_aminoacids(char *RNA_sequence, char *aminoacids_sequence)
 
          Funtion permutations_aux
          Funtion permutations
-                 generate_RNA
-                 get_valid_RNA   (get file)
-                 RNA_to_DNA
-                 translate_file_with_aminoacids()
-
-
-
-
-
-
-
 */
 
+void generate_RNA(char *target_file_name, int k)
+{
+    char nitrogenous_bases[] = "ACUG";
+    permutations(nitrogenous_bases, target_file_name, k);
+}
+
+void get_valid_RNA(char *source_file_name, char *target_file_name, char *aminoacids)
+{
+    FILE* source_file_ptr = fopen(source_file_name, "r");
+    FILE* target_file_ptr = fopen(target_file_name, "w");
+    char current_RNA[4096];
+    char current_aminoacids[1365];
+    while (fgets(current_RNA, sizeof(current_RNA), source_file_ptr)) {
+        RNA_to_aminoacids(current_RNA, current_aminoacids);
+        if (strcmp(aminoacids, current_aminoacids) == 0) {
+            fputs(current_RNA, target_file_ptr);
+        }
+    }
+    fclose(source_file_ptr);
+    fclose(target_file_ptr);
+}
+
+void RNA_to_DNA(char *source_file_name, char *target_file_name)
+{
+    char sequence[4096];
+    FILE* source_file_ptr = fopen(source_file_name, "r");
+    if (source_file_ptr == NULL) {
+        fputs("RNA_to_DNA error: file open failed.", stderr);
+        return;
+    }
+    FILE* target_file_ptr = fopen(target_file_name, "w");
+    if (target_file_ptr == NULL) {
+        fputs("RNA_to_DNA error: file open failed.", stderr);
+        return;
+    }
+    puts("Possible DNA sequences:");
+    while (fgets(sequence, sizeof(sequence), source_file_ptr)) {
+        int seq_len = strlen(sequence);
+        int i;
+        for (i = 0; i < seq_len; ++i) {
+            if (sequence[i] == 'U') {
+                sequence[i] = 'T';
+            }
+        }
+        printf("%s", sequence);
+        fputs(sequence, target_file_ptr);
+    }
+    fclose(source_file_ptr);
+    fclose(target_file_ptr);
+}
+
+void translate_file_with_aminoacids()
+{
+    puts("**Amino-Acids-to-DNA**");
+    /* scans file with aminoacids */
+    printf("Please enter the path of file to scan: ");
+    char source_file_name[80];
+    scanf("%79s", source_file_name);
+    /* scans aminoacids sequence */
+    FILE *source_file_ptr;
+    if (!(source_file_ptr = fopen(source_file_name, "r"))) {
+        fputs("translate_file_with_aminoacids() error: file open failed.", stderr);
+        fclose(source_file_ptr);
+        return;
+    }
+    /* scans text until newline */
+    char aminoacids_buffer[1365];
+    fscanf(source_file_ptr,"%1364[^\n]", aminoacids_buffer);
+    fclose(source_file_ptr);
+    printf("Data from the file: %s\n", aminoacids_buffer);
+    if (!are_aminoacids(aminoacids_buffer)) {
+        fputs("translate_file_with_aminoacids() error: this is not aminoacids.", stderr);
+        return;
+    }
+    generate_RNA("output_RNA.txt", strlen(aminoacids_buffer) * 3);
+    get_valid_RNA("output_RNA.txt", "output_valid_RNA.txt", aminoacids_buffer);
+    RNA_to_DNA("output_valid_RNA.txt", "output_DNA.txt");
+}
 
 int main()
 {
     translate_file_with_aminoacids();
 }
+
